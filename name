@@ -1,0 +1,95 @@
+import pandas as pd
+import re
+
+# /Users/bestenurkaradeniz/Desktop/name_surname.csv
+# open file
+fileName = input("file location ")
+data = pd.read_csv(fileName)
+
+# select columns&column
+nameCol = input("name column index ")
+surnameCol = input("surname column index ")
+print("\n")
+
+df = pd.DataFrame(data)
+
+if nameCol != surnameCol:
+    df = df[[nameCol] + [surnameCol]]
+else:
+    df = df[[nameCol]]
+
+# print(df)
+
+# for count
+names = []
+if nameCol == surnameCol:
+    names = df[nameCol]
+else:
+    names = df[nameCol] + " " + df[surnameCol]
+
+print(names)
+print("\n")
+name_list = []
+for count_letter in names:
+    name_list.append(len(count_letter))
+# print(name_list)
+
+# frequent
+count = {}
+for i in name_list:
+    if i in count:
+        count[i] += 1
+    else:
+        count[i] = 1
+
+print("frequency of string character: ")
+print(count)
+print("\n")
+
+# where will split
+split_string = int(input("select where split  "))
+print("\n")
+
+new_names = []
+for n in names:
+    # last = n.rfind(' ')  # use when compare
+    last = n.split()
+    # firstly split name for check
+    name = n[0:split_string]
+    new_name = name.split()
+    # new_name = name.rfind(' ')
+    # first last split, split again for compare two string with last word
+    last_word = last[-1]
+    # for new name, get last word
+    new_last_word = new_name[-1]
+    namet = len(name) - len(new_last_word)
+
+    if len(n) > split_string:
+        name = n[0:split_string]
+        abc = name.split()
+        a = len(abc[-1])
+        namett = len(name) - a -1
+        if len(last_word) != a:
+            name.replace(abc[-1], ' ')
+            if namett <= split_string:
+                name = name[0:namett]
+            else:
+                name = name[0:split_string]
+        print(name)
+        name = name.rstrip()
+        new_names.append(name)
+    else:
+        name = n
+        print(name)
+        name = name.rstrip()
+        new_names.append(name)
+
+# print(new_names)
+header_name = input("\nenter header name  ")
+data.insert(1, header_name, new_names)
+if 'Unnamed: 0' in data:
+    data = data.drop(columns="Unnamed: 0")
+print(data)
+
+csv_name = input("\nenter file name:  ")
+data.to_csv(csv_name)
